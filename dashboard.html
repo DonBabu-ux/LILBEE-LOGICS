@@ -18,6 +18,7 @@
     </div>
 
     <nav class="menu">
+      <button data-tab="admin" class="tab glass-card">
       <button data-tab="feed">Feed</button>
       <button data-tab="services">Services</button>
       <button data-tab="chat">Chat</button>
@@ -27,7 +28,13 @@
 
   <!-- MAIN CONTENT -->
   <main class="main">
-
+<section id="admin" clas="tab glass-card">
+  <h2>Admin panel</h2>
+  <h3>Pending Service requests</h3>
+  <div id="adminserviceRequests"></div>
+  <h3>Registered Users</h3>
+  <div id="userList"></div>
+</section>
     <!-- FEED -->
     <section id="feed" class="tab active glass-card">
       <h2>Community Feed</h2>
