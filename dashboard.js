@@ -85,3 +85,33 @@ function setupChat() {
     chatForm.reset();
   });
 }
+
+
+import { auth } from "./firebase.js";
+import { onAuthStateChanged, signOut } from
+"https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { trackPresence } from "./presence.js";
+import "./services.js";
+import "./chat.js";
+import "./social.js";
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    document.getElementById("userEmail").textContent = user.email;
+    trackPresence();
+  }
+});
+
+document.getElementById("logoutBtn").onclick = () => {
+  signOut(auth).then(() => location.href = "login.html");
+};
+
+document.querySelectorAll("[data-tab]").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.getElementById(btn.dataset.tab).classList.add("active");
+  };
+});
+
