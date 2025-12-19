@@ -1,12 +1,10 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up | Lil-Bee Logics</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body class="auth">
@@ -21,19 +19,19 @@
       <span></span>
     </div>
 
-    <form class="auth-form" id="signup">
+    <form class="auth-form" id="signupForm">
 
       <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Your username" required>
+      <input type="text" id="username" placeholder="Your username" required />
 
       <label for="email">Email</label>
-      <input type="email" id="email" placeholder="you@example.com" required>
+      <input type="email" id="email" placeholder="you@example.com" required />
 
       <label for="phone">Phone</label>
-      <input type="tel" id="phone" placeholder="+254..." required>
+      <input type="tel" id="phone" placeholder="+254..." required />
 
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="••••••••" required>
+      <input type="password" id="password" placeholder="••••••••" required />
 
       <button type="submit">Register</button>
 
@@ -44,6 +42,45 @@
       <a href="login.html">Login</a>
     </p>
   </div>
+
+  <!-- FIREBASE SIGNUP LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkMFYizmJ4dd8G8oJ9uw1JdgzwhtmsENU",
+      authDomain: "mywebapp-bb780.firebaseapp.com",
+      projectId: "mywebapp-bb780",
+      storageBucket: "mywebapp-bb780.appspot.com",
+      messagingSenderId: "1020137155241",
+      appId: "1:1020137155241:web:5f120fc16d62249fd897b8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const form = document.getElementById("signupForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+
+        // ✅ SUCCESS → redirect to dashboard
+        window.location.href = "dashboard.html";
+
+      } catch (error) {
+        // ❌ FAILURE → null behavior (log only)
+        console.error(error.message);
+      }
+    });
+  </script>
 
 </body>
 </html>
