@@ -12,29 +12,23 @@
   <!-- SIDEBAR -->
   <aside class="sidebar glass-card">
     <div class="profile">
-      <div class="avatar"></div>
+      <div class="avatar" id="userAvatar"></div>
       <h3 id="userEmail">Loading...</h3>
       <span id="userStatus" class="status online">Online</span>
     </div>
 
     <nav class="menu">
-      <button data-tab="admin" class="tab glass-card">
-      <button data-tab="feed">Feed</button>
-      <button data-tab="services">Services</button>
-      <button data-tab="chat">Chat</button>
+      <button data-tab="feed" class="tab active">Feed</button>
+      <button data-tab="services" class="tab">Services</button>
+      <button data-tab="chat" class="tab">Chat</button>
+      <button data-tab="profile" class="tab">Profile</button>
       <button id="logoutBtn" class="danger">Logout</button>
     </nav>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="main">
-<section id="admin" clas="tab glass-card">
-  <h2>Admin panel</h2>
-  <h3>Pending Service requests</h3>
-  <div id="adminserviceRequests"></div>
-  <h3>Registered Users</h3>
-  <div id="userList"></div>
-</section>
+
     <!-- FEED -->
     <section id="feed" class="tab active glass-card">
       <h2>Community Feed</h2>
@@ -42,7 +36,7 @@
       <textarea id="postContent" placeholder="Share something..."></textarea>
       <button id="postBtn">Post</button>
 
-      <div id="posts"></div>
+      <div id="posts" class="feed-posts"></div>
     </section>
 
     <!-- SERVICES -->
@@ -69,8 +63,51 @@
       </div>
     </section>
 
+    <!-- PROFILE -->
+    <section id="profile" class="tab glass-card">
+      <h2>Profile</h2>
+
+      <div class="profile-update">
+        <label for="updateName">Name</label>
+        <input type="text" id="updateName" placeholder="Your name">
+
+        <label for="updateEmail">Email</label>
+        <input type="email" id="updateEmail" placeholder="Your email">
+
+        <label for="updateAvatar">Avatar URL</label>
+        <input type="text" id="updateAvatar" placeholder="Avatar image URL">
+
+        <button id="updateProfileBtn">Update Profile</button>
+      </div>
+    </section>
+
+    <!-- SERVICES EXPLAINED -->
+    <section id="servicesInfo" class="tab glass-card">
+      <h2>Our Services</h2>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <h3>Web Development</h3>
+          <p>Modern websites, scalable apps, and responsive designs for your business.</p>
+        </div>
+        <div class="service-card">
+          <h3>Graphic Design</h3>
+          <p>Branding, UI/UX, and marketing materials designed to impress.</p>
+        </div>
+        <div class="service-card">
+          <h3>Cybersecurity</h3>
+          <p>Protect your data and infrastructure with advanced security solutions.</p>
+        </div>
+        <div class="service-card">
+          <h3>Virtual Assistance</h3>
+          <p>Reliable admin and tech support to keep your operations running smoothly.</p>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
