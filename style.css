@@ -484,3 +484,25 @@ body.auth {
 #feedbackForm button:hover {
   transform: translateY(-2px);
 }
+
+
+
+.social-footer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.social-footer img {
+  width: 30px;
+  height: 30px;
+  filter: brightness(0) invert(1); /* makes icons white */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.social-footer a:hover img {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
