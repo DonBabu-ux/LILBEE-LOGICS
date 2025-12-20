@@ -103,6 +103,16 @@
     <a href="signup.html" class="cta-primary">Create Account</a>
   </section>
 
+  <!-- Merry Christmas Message -->
+<div class="christmas-msg">
+  Merry Christmas from CEO LilBee Logics & Team!
+</div>
+
+<!-- Countdown Timer -->
+<div class="countdown" id="christmas-countdown">
+  </div>
+
+
   <!-- FOOTER -->
   <footer class="footer card glass-card" id="contact">
     <div class="footer-content">
@@ -133,9 +143,52 @@
       </a>
     </div>
   </footer>
+<script>
+// --- CREATE FLOATING SANTA & ICE ---
+const body = document.body;
+
+function createElement(cls, src){
+  const el = document.createElement('img');
+  el.src = src;
+  el.className = cls;
+  el.style.top = Math.random() * window.innerHeight + 'px';
+  el.style.left = Math.random() * window.innerWidth + 'px';
+  el.style.transform = `rotate(${Math.random()*360}deg)`;
+  body.appendChild(el);
+}
+
+// Add 5 Santa and 30 Ice particles
+for(let i=0;i<5;i++){
+  createElement('santa','https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Santa_Claus.png/40px-Santa_Claus.png');
+}
+for(let i=0;i<30;i++){
+  createElement('ice','https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Snowflake_icon.svg/20px-Snowflake_icon.svg.png');
+}
+
+// --- COUNTDOWN TO CHRISTMAS ---
+function updateCountdown(){
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const christmas = new Date(`December 25, ${currentYear} 00:00:00`);
+  if(now > christmas) christmas.setFullYear(currentYear + 1);
+  const diff = christmas - now;
+
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff / (1000*60*60)) % 24);
+  const mins = Math.floor((diff / (1000*60)) % 60);
+  const secs = Math.floor((diff / 1000) % 60);
+
+  document.getElementById('christmas-countdown').textContent =
+    `🎄 ${days}d ${hours}h ${mins}m ${secs}s until Christmas! 🎅`;
+}
+
+setInterval(updateCountdown,1000);
+updateCountdown();
+</script>
 
 </body>
 </html>
+
 
 
 
