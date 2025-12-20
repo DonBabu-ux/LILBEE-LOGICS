@@ -1,3 +1,122 @@
+/* --- GENERAL RESET & BASE --- */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(160deg, #0a0a2a, #2b0a2a);
+  color: #fff;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* --- GLASS CARDS --- */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- HERO SECTION --- */
+.hero {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 4rem 2rem;
+}
+.hero h1 span {
+  color: #ff3c3c; /* festive red */
+}
+.hero p {
+  font-size: 1.2rem;
+  margin: 1rem 0 2rem;
+}
+
+/* --- CTA BUTTONS --- */
+.cta-primary {
+  background: #ff3c3c;
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  margin: 0 1rem;
+  transition: all 0.3s ease;
+}
+.cta-primary:hover {
+  background: #ff6161;
+}
+
+/* --- FLOATING SANTA & ICE --- */
+.santa, .ice {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1000;
+  animation: float 10s linear infinite;
+}
+
+.ice {
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+  animation-duration: 15s;
+}
+
+@keyframes float {
+  0% { transform: translate(0,0) rotate(0deg); }
+  50% { transform: translate(100px, 200px) rotate(180deg); }
+  100% { transform: translate(-100px, 0) rotate(360deg); }
+}
+
+/* --- MESSAGE --- */
+.christmas-msg {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 60, 60, 0.8);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: bold;
+  z-index: 10000;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+/* --- COUNTDOWN --- */
+.countdown {
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 2rem;
+  color: #fff;
+  text-shadow: 0 0 10px #ff3c3c;
+}
+
+/* --- FOOTER OVERLAY --- */
+footer {
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ===============================
    LIL-BEE LOGICS – LANDING PAGE CSS
    Glassmorphism • Glow • Modern UI
@@ -611,5 +730,6 @@ button.danger {
   background: #f44336;
   color: #fff;
 }
+
 
 
