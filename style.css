@@ -103,6 +103,21 @@ footer {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.floating {
+  position: fixed;
+  font-size: 2rem;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1000;
+  animation: floatLinear linear infinite;
+}
+
+@keyframes floatLinear {
+  0% { transform: translate(var(--x), var(--y)) rotate(0deg); }
+  100% { transform: translate(var(--x-end), var(--y-end)) rotate(360deg); }
+}
+
+
 
 
 
@@ -730,6 +745,7 @@ button.danger {
   background: #f44336;
   color: #fff;
 }
+
 
 
 
