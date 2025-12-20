@@ -144,50 +144,40 @@
     </div>
   </footer>
 <script>
-// --- CREATE FLOATING SANTA & ICE ---
-const body = document.body;
+// --- CREATE FLOATING ELEMENTS ---
+function createFloating(symbol, size = '2rem'){
+  const el = document.createElement('div');
+  el.textContent = symbol;
+  el.style.fontSize = size;
+  el.className = 'floating';
+  
+  const startX = Math.random() * window.innerWidth;
+  const startY = Math.random() * window.innerHeight;
+  const endX = Math.random() * window.innerWidth;
+  const endY = Math.random() * window.innerHeight;
 
-function createElement(cls, src){
-  const el = document.createElement('img');
-  el.src = src;
-  el.className = cls;
-  el.style.top = Math.random() * window.innerHeight + 'px';
-  el.style.left = Math.random() * window.innerWidth + 'px';
-  el.style.transform = `rotate(${Math.random()*360}deg)`;
-  body.appendChild(el);
+  el.style.setProperty('--x', startX + 'px');
+  el.style.setProperty('--y', startY + 'px');
+  el.style.setProperty('--x-end', endX + 'px');
+  el.style.setProperty('--y-end', endY + 'px');
+
+  const duration = Math.random() * 10 + 5; // 5-15s
+  el.style.animationDuration = `${duration}s`;
+
+  document.body.appendChild(el);
 }
 
-// Add 5 Santa and 30 Ice particles
-for(let i=0;i<5;i++){
-  createElement('santa','https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Santa_Claus.png/40px-Santa_Claus.png');
-}
-for(let i=0;i<30;i++){
-  createElement('ice','https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Snowflake_icon.svg/20px-Snowflake_icon.svg.png');
-}
+// Add 5 Santa 🎅
+for(let i = 0; i < 5; i++) createFloating('🎅','2.5rem');
 
-// --- COUNTDOWN TO CHRISTMAS ---
-function updateCountdown(){
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const christmas = new Date(`December 25, ${currentYear} 00:00:00`);
-  if(now > christmas) christmas.setFullYear(currentYear + 1);
-  const diff = christmas - now;
-
-  const days = Math.floor(diff / (1000*60*60*24));
-  const hours = Math.floor((diff / (1000*60*60)) % 24);
-  const mins = Math.floor((diff / (1000*60)) % 60);
-  const secs = Math.floor((diff / 1000) % 60);
-
-  document.getElementById('christmas-countdown').textContent =
-    `🎄 ${days}d ${hours}h ${mins}m ${secs}s until Christmas! 🎅`;
-}
-
-setInterval(updateCountdown,1000);
-updateCountdown();
+// Add 30 Snowflakes ❄️
+for(let i = 0; i < 30; i++) createFloating('❄️','1.5rem');
 </script>
+
 
 </body>
 </html>
+
 
 
 
