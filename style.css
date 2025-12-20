@@ -1,5 +1,51 @@
-/* --- GENERAL RESET & BASE --- */
+/* --- CHRISTMAS MESSAGE --- */
+.christmas-msg {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 60, 60, 0.85);
+  color: #fff;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: bold;
+  z-index: 10000;
+  text-align: center;
+  font-size: 1.2rem;
+  text-shadow: 0 0 8px #ff3c3c, 0 0 16px #ff6b6b, 0 0 24px #ff3c3c;
+  box-shadow: 0 0 20px #ff3c3c, 0 0 40px #ff6b6b;
+  animation: glow 2s ease-in-out infinite alternate;
+  max-width: 90%; /* prevents overflow on small screens */
+}
 
+/* Glow animation */
+@keyframes glow {
+  0% { text-shadow: 0 0 8px #ff3c3c, 0 0 16px #ff6b6b, 0 0 24px #ff3c3c; box-shadow: 0 0 20px #ff3c3c, 0 0 40px #ff6b6b; }
+  50% { text-shadow: 0 0 12px #ff3c3c, 0 0 24px #ff8b8b, 0 0 36px #ff3c3c; box-shadow: 0 0 30px #ff3c3c, 0 0 60px #ff8b8b; }
+  100% { text-shadow: 0 0 8px #ff3c3c, 0 0 16px #ff6b6b, 0 0 24px #ff3c3c; box-shadow: 0 0 20px #ff3c3c, 0 0 40px #ff6b6b; }
+}
+
+/* --- RESPONSIVE FONT SIZE --- */
+@media (max-width: 1200px) {
+  .christmas-msg {
+    font-size: 1.1rem;
+    padding: 0.7rem 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .christmas-msg {
+    font-size: 1rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .christmas-msg {
+    font-size: 0.9rem;
+    padding: 0.5rem 1.2rem;
+  }
+}
 
 /* --- COUNTDOWN --- */
 .countdown {
@@ -658,6 +704,7 @@ button.danger {
   background: #f44336;
   color: #fff;
 }
+
 
 
 
