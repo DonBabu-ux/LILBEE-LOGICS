@@ -12,12 +12,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DB_FILE = path.join(__dirname, 'db.json');
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // Serve static files from root
+app.use(express.static(__dirname));
 
-// Helpers
 async function readDB() {
     return await fs.readJson(DB_FILE);
 }
@@ -25,8 +23,6 @@ async function readDB() {
 async function writeDB(data) {
     await fs.writeJson(DB_FILE, data, { spaces: 2 });
 }
-
-// -------------------- AUTH API --------------------
 
 app.post('/api/auth/signup', async (req, res) => {
     const { email, password } = req.body;
@@ -64,8 +60,6 @@ app.post('/api/auth/login', async (req, res) => {
     res.json(user);
 });
 
-// -------------------- POSTS API --------------------
-
 app.get('/api/posts', async (req, res) => {
     const db = await readDB();
     res.json(db.posts);
@@ -101,8 +95,6 @@ app.delete('/api/posts/:id', async (req, res) => {
     res.json({ success: true });
 });
 
-// -------------------- SERVICES API --------------------
-
 app.get('/api/requests', async (req, res) => {
     const { uid } = req.query;
     const db = await readDB();
@@ -110,7 +102,6 @@ app.get('/api/requests', async (req, res) => {
     if (uid) {
         res.json(db.requests.filter(r => r.uid === uid));
     } else {
-        // Should be admin check in real world
         res.json(db.requests);
     }
 });
@@ -148,8 +139,6 @@ app.patch('/api/requests/:id', async (req, res) => {
     }
 });
 
-// -------------------- USERS API (ADMIN) --------------------
-
 app.get('/api/users', async (req, res) => {
     const db = await readDB();
     res.json(db.users);
@@ -166,7 +155,6 @@ app.patch('/api/users/:uid', async (req, res) => {
         await writeDB(db);
         res.json(db.users[userIdx]);
     } else {
-        // If user doesn't exist (like seeding via UI), create them
         if (updates.email) {
             const newUser = {
                 uid: uid || "user_" + Date.now(),
@@ -208,8 +196,6 @@ app.post('/api/users', async (req, res) => {
     res.json(newUser);
 });
 
-// -------------------- CHAT API --------------------
-
 app.get('/api/chat', async (req, res) => {
     const db = await readDB();
     res.json(db.chat);
@@ -239,8 +225,6 @@ app.delete('/api/chat/:id', async (req, res) => {
     await writeDB(db);
     res.json({ success: true });
 });
-
-// -------------------- SERVER START --------------------
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

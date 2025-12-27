@@ -1,7 +1,6 @@
-const API_URL = ""; // Relative path works since we serve from same server
+const API_URL = "";
 
 export const localDB = {
-    // USERS
     async getUsers() {
         const res = await fetch(`${API_URL}/api/users`);
         return await res.json();
@@ -24,7 +23,6 @@ export const localDB = {
         }
     },
 
-    // POSTS
     async getPosts() {
         const res = await fetch(`${API_URL}/api/posts`);
         return await res.json();
@@ -48,7 +46,6 @@ export const localDB = {
         window.dispatchEvent(new CustomEvent(`localDBUpdate:posts`));
     },
 
-    // SERVICE REQUESTS
     async getRequests(uid) {
         const url = uid ? `${API_URL}/api/requests?uid=${uid}` : `${API_URL}/api/requests`;
         const res = await fetch(url);
@@ -75,7 +72,6 @@ export const localDB = {
         return updated;
     },
 
-    // CHAT
     async getChat() {
         const res = await fetch(`${API_URL}/api/chat`);
         return await res.json();

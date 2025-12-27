@@ -1,8 +1,6 @@
-// -------------------- IMPORT LOCAL HANDLERS --------------------
 import { localAuth } from "./local-auth.js";
 import { localDB } from "./local-db.js";
 
-// -------------------- TAB NAVIGATION --------------------
 const tabs = document.querySelectorAll(".menu .tab");
 const tabSections = document.querySelectorAll("main .tab");
 
@@ -24,14 +22,12 @@ tabs.forEach(tab => {
   });
 });
 
-// -------------------- AUTH & PROFILE --------------------
 localAuth.onAuthStateChanged(async user => {
   if (!user) {
     window.location.href = "login.html";
     return;
   }
 
-  // -------------------- SYNC SESSION --------------------
   try {
     const users = await localDB.getUsers();
     const freshUser = users.find(u => u.uid === user.uid);
@@ -44,9 +40,7 @@ localAuth.onAuthStateChanged(async user => {
   } catch (err) {
     console.warn("Could not sync session:", err);
   }
-  // ------------------------------------------------------
 
-  // Update Profile UI
   const updateUI = (data) => {
     document.getElementById("userEmail").innerText = data.email;
     document.getElementById("userRole").innerText = data.role || "user";
@@ -58,7 +52,6 @@ localAuth.onAuthStateChanged(async user => {
       document.getElementById("userAvatar").style.backgroundSize = "cover";
     }
 
-    // Admin-only toggle
     if (data.role === 'admin') {
       document.getElementById("adminTabBtn").hidden = false;
       setupAdminListeners();
@@ -67,13 +60,11 @@ localAuth.onAuthStateChanged(async user => {
 
   updateUI(user);
 
-  // Listen for local profile updates
   window.addEventListener("localDBUpdate:users", () => {
     const updatedUser = localAuth.getCurrentUser();
     if (updatedUser) updateUI(updatedUser);
   });
 
-  // Profile Edit Toggle
   const toggleBtn = document.getElementById("toggleUpdateBtn");
   const updateArea = document.getElementById("profileUpdateArea");
   if (toggleBtn && updateArea) {
@@ -89,13 +80,11 @@ localAuth.onAuthStateChanged(async user => {
   setupChat(user.uid);
 });
 
-// -------------------- LOGOUT --------------------
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localAuth.logout();
   window.location.href = "login.html";
 });
 
-// -------------------- PROFILE UPDATE --------------------
 document.getElementById("updateProfileBtn").addEventListener("click", async () => {
   const user = localAuth.getCurrentUser();
   const updatedData = {
@@ -106,24 +95,21 @@ document.getElementById("updateProfileBtn").addEventListener("click", async () =
   };
 
   const updated = await localDB.saveUser(updatedData);
-  localAuth.saveSession(updated); // Update local session as well
+  localAuth.saveSession(updated);
   alert("Profile updated!");
   document.getElementById("profileUpdateArea").hidden = true;
   document.getElementById("toggleUpdateBtn").innerText = "Edit Profile";
 });
 
-// -------------------- ONLINE PRESENCE (MOCK) --------------------
 function setupPresence(uid) {
   const statusSpan = document.getElementById("userStatus");
   statusSpan.innerText = "Online";
 }
 
-// -------------------- COMMUNITY FEED --------------------
 function setupFeed(currentUser) {
   const publicFeedDiv = document.getElementById("publicFeed");
   const myPostsDiv = document.getElementById("myPostsFeed");
 
-  // Feed Switching Logic
   const feedTabs = document.querySelectorAll(".feed-tab");
   feedTabs.forEach(tab => {
     tab.addEventListener("click", () => {
@@ -188,7 +174,6 @@ function setupFeed(currentUser) {
   };
 }
 
-// -------------------- SERVICE REQUESTS --------------------
 function setupServices(uid) {
   const listDiv = document.getElementById("serviceList");
 
@@ -229,7 +214,6 @@ function setupServices(uid) {
   };
 }
 
-// -------------------- CHAT --------------------
 function setupChat(uid) {
   const chatBox = document.getElementById("chatBox");
 
@@ -261,13 +245,11 @@ function setupChat(uid) {
   };
 }
 
-// -------------------- ADMIN LOGIC --------------------
 let adminListenersLoaded = false;
 function setupAdminListeners() {
   if (adminListenersLoaded) return;
   adminListenersLoaded = true;
 
-  // Sub-tab navigation
   const subTabs = document.querySelectorAll(".sub-tab");
   const subSections = document.querySelectorAll(".admin-content");
 
@@ -283,7 +265,6 @@ function setupAdminListeners() {
     });
   });
 
-  // Admin Create User
   document.getElementById("adminCreateUserBtn").onclick = async () => {
     const email = document.getElementById("adminNewUserEmail").value.trim();
     const password = document.getElementById("adminNewUserPass").value.trim();
@@ -309,7 +290,6 @@ function setupAdminListeners() {
     const posts = await localDB.getPosts();
     const chat = await localDB.getChat();
 
-    // User Management
     const tableBody = document.getElementById("userTableBody");
     tableBody.innerHTML = "";
     users.forEach(user => {
@@ -329,7 +309,6 @@ function setupAdminListeners() {
       tableBody.appendChild(row);
     });
 
-    // Service Requests
     const adminServiceList = document.getElementById("adminServiceList");
     adminServiceList.innerHTML = "";
     requests.forEach(req => {
@@ -351,7 +330,6 @@ function setupAdminListeners() {
       adminServiceList.appendChild(div);
     });
 
-    // Moderation
     const adminPostList = document.getElementById("adminPostList");
     adminPostList.innerHTML = "";
     posts.forEach(post => {
@@ -380,7 +358,6 @@ function setupAdminListeners() {
   window.addEventListener("localDBUpdate:chat", renderAdmin);
 }
 
-// Global scope functions
 window.updateUserRole = async (uid, newRole) => {
   await localDB.saveUser({ uid, role: newRole });
   alert("User role updated!");

@@ -13,7 +13,6 @@
   <div class="auth-container">
     <h2>Sign Up to Access Lil-Bee Logics Services</h2>
 
-    <!-- Glowing bars -->
     <div class="auth-bars">
       <span></span>
       <span></span>
@@ -54,7 +53,6 @@
 
       try {
         await localAuth.signup(email, password);
-        // ✅ SUCCESS → redirect to dashboard
         window.location.href = "dashboard.html";
       } catch (error) {
         console.error("Signup failed:", error.message);

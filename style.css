@@ -1,11 +1,7 @@
-/* --- CHRISTMAS MESSAGE --- */
 .christmas-msg {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  /* top: 1rem; */
-  /* left: 50%; */
-  /* transform: translateX(-50%); */
   background: rgba(255, 60, 60, 0.9);
   color: #fff;
   padding: 1rem 1.5rem;
@@ -20,7 +16,6 @@
   max-width: 300px;
 }
 
-/* Glow animation */
 @keyframes glow {
   0% {
     text-shadow: 0 0 8px #ff3c3c, 0 0 16px #ff6b6b, 0 0 24px #ff3c3c;
@@ -38,7 +33,6 @@
   }
 }
 
-/* --- RESPONSIVE FONT SIZE --- */
 @media (max-width: 1200px) {
   .christmas-msg {
     font-size: 1.1rem;
@@ -60,7 +54,6 @@
   }
 }
 
-/* --- COUNTDOWN --- */
 .countdown {
   text-align: center;
   font-size: 2rem;
@@ -69,7 +62,6 @@
   text-shadow: 0 0 10px #ff3c3c;
 }
 
-/* --- FOOTER OVERLAY --- */
 footer {
   background: rgba(255, 255, 255, 0.05);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -93,26 +85,6 @@ footer {
     transform: translate(var(--x-end), var(--y-end)) rotate(360deg);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ===============================
-   LIL-BEE LOGICS – LANDING PAGE CSS
-   Glassmorphism • Glow • Modern UI
-   =============================== */
 
 :root {
   --bg1: #0f172a;
@@ -138,7 +110,6 @@ body {
   color: var(--text);
 }
 
-/* ================= NAVIGATION ================= */
 .nav-wrapper {
   position: sticky;
   top: 0;
@@ -204,7 +175,6 @@ body {
   font-weight: 600;
 }
 
-/* ================= HERO ================= */
 .hero {
   max-width: 1200px;
   margin: auto;
@@ -292,7 +262,6 @@ body {
   }
 }
 
-/* ================= SERVICES ================= */
 .services {
   max-width: 1200px;
   margin: auto;
@@ -335,7 +304,6 @@ body {
   color: var(--accent);
 }
 
-/* ================= ABOUT ================= */
 .about {
   max-width: 900px;
   margin: auto;
@@ -347,7 +315,6 @@ body {
   color: var(--muted);
 }
 
-/* ================= FINAL CTA ================= */
 .final-cta {
   margin: 80px auto;
   max-width: 800px;
@@ -362,7 +329,6 @@ body {
   margin-top: 0;
 }
 
-/* ================= FOOTER ================= */
 .footer {
   border-top: 1px solid var(--border);
   padding: 24px;
@@ -384,7 +350,6 @@ body {
   text-decoration: none;
 }
 
-/* ================= RESPONSIVE ================= */
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;
@@ -396,7 +361,6 @@ body {
   }
 }
 
-
 :root {
   --bg1: #0f172a;
   --bg2: #07123a;
@@ -407,7 +371,6 @@ body {
   --muted: #94a3b8;
 }
 
-/* Page base */
 body.auth {
   min-height: 100vh;
   margin: 0;
@@ -420,7 +383,6 @@ body.auth {
   color: var(--text);
 }
 
-/* Glass card */
 .auth-container {
   width: 100%;
   max-width: 420px;
@@ -436,14 +398,12 @@ body.auth {
   text-align: center;
 }
 
-/* Title */
 .auth-container h2 {
   margin: 0;
   font-size: 22px;
   font-weight: 600;
 }
 
-/* Glowing bars */
 .auth-bars {
   display: flex;
   justify-content: center;
@@ -475,7 +435,6 @@ body.auth {
   animation-delay: .4s;
 }
 
-/* Glow animation */
 @keyframes authGlow {
 
   0%,
@@ -490,7 +449,6 @@ body.auth {
   }
 }
 
-/* Form */
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -498,13 +456,11 @@ body.auth {
   text-align: left;
 }
 
-/* Labels */
 .auth-form label {
   font-size: 13px;
   color: var(--muted);
 }
 
-/* Inputs */
 .auth-form input {
   padding: 11px 14px;
   border-radius: 10px;
@@ -524,7 +480,6 @@ body.auth {
   box-shadow: 0 0 0 3px rgba(255, 184, 107, 0.25);
 }
 
-/* Button */
 .auth-form button {
   margin-top: 6px;
   padding: 12px;
@@ -543,7 +498,6 @@ body.auth {
   box-shadow: 0 14px 30px rgba(255, 184, 107, 0.35);
 }
 
-/* Switch text */
 .auth-switch {
   margin-top: 14px;
   font-size: 13px;
@@ -556,26 +510,22 @@ body.auth {
   text-decoration: none;
 }
 
-/* Validation UX */
 .auth-form input:invalid:not(:focus):not(:placeholder-shown) {
   border-color: #ff6b6b;
 }
 
-/* Motion safety */
 @media (prefers-reduced-motion: reduce) {
   .auth-bars span {
     animation: none;
   }
 }
 
-/* Small screens */
 @media (max-width: 480px) {
   .auth-container {
     padding: 22px;
   }
 }
 
-/* Feedback Form Inputs */
 #feedbackForm input,
 #feedbackForm textarea {
   width: 100%;
@@ -605,8 +555,6 @@ body.auth {
   transform: translateY(-2px);
 }
 
-
-
 .social-footer {
   display: flex;
   justify-content: center;
@@ -619,7 +567,6 @@ body.auth {
   width: 30px;
   height: 30px;
   filter: brightness(0) invert(1);
-  /* makes icons white */
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
@@ -627,7 +574,6 @@ body.auth {
   transform: scale(1.2);
   opacity: 0.8;
 }
-
 
 body.dashboard {
   margin: 0;
@@ -744,10 +690,8 @@ button.approve {
   margin-right: 6px;
 }
 
-/* --- DASHBOARD REFINEMENTS --- */
 .dashboard {
   overflow: hidden;
-  /* Prevent body scroll, use main scroll */
 }
 
 .sidebar {
@@ -803,7 +747,6 @@ button.approve {
   color: #000;
 }
 
-/* Feed Nav */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -891,13 +834,6 @@ button.approve {
   color: #fff;
 }
 
-
-
-
-
-
-
-/* --- ADMIN PANEL --- */
 .admin-nav {
   display: flex;
   gap: 12px;
@@ -1034,10 +970,10 @@ th {
 @media (max-width: 768px) {
   .mod-grid {
     grid-template-columns: 1fr;
+    text-align: center;
   }
 }
 
-/* --- ADMIN NAVIGATION --- */
 .admin-nav {
   display: flex;
   gap: 12px;
