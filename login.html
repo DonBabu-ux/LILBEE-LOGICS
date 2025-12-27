@@ -36,24 +36,30 @@
   </div>
 
   <script type="module">
-    import { localAuth } from "./local-auth.js";
+  import { auth } from "./firebase.js";
+  import {
+    signInWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-    const form = document.getElementById("loginForm");
+  const form = document.getElementById("loginForm");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      try {
-        await localAuth.login(email, password);
-        window.location.href = "dashboard.html";
-      } catch (error) {
-        console.error("Login failed:", error.message);
-        alert("Login failed: " + error.message);
-      }
-    });
-  </script>
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      alert(err.message);
+      console.error(err);
+    }
+  });
+</script>
+
 </body>
 
 </html>
+
