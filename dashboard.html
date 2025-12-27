@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Dashboard | Lil-Bee Logics</title>
@@ -9,19 +10,30 @@
 
 <body class="dashboard">
 
+  <!-- SIDEBAR -->
   <aside class="sidebar glass-card">
     <div class="profile">
       <div id="userAvatar" class="avatar"></div>
+      <div id="avatarPreview" style="width:80px;height:80px;border-radius:50%;background:#ddd;background-size:cover;margin:10px auto;"></div>
+
       <h3 id="userEmail">Loading...</h3>
       <span id="userRole" class="badge">user</span>
       <div id="userStatus" class="status online">Online</div>
 
       <button id="toggleUpdateBtn" class="small-btn">Edit Profile</button>
-
       <div id="profileUpdateArea" class="profile-update" hidden>
-        <input type="text" id="updateName" placeholder="Name">
-        <input type="email" id="updateEmail" placeholder="Email (read-only)" disabled>
-        <input type="text" id="updateAvatar" placeholder="Avatar URL">
+        <label>Name:</label><br>
+        <input type="text" id="updateName" placeholder="Name"><br>
+
+        <label>Phone:</label><br>
+        <input type="tel" id="updatePhone" placeholder="Phone"><br>
+
+        <label>Email:</label><br>
+        <input type="email" id="updateEmail" placeholder="Email"><br>
+
+        <label>Avatar URL:</label><br>
+        <input type="text" id="updateAvatar" placeholder="Avatar URL"><br><br>
+
         <button id="updateProfileBtn">Save Changes</button>
       </div>
     </div>
@@ -35,6 +47,7 @@
     </nav>
   </aside>
 
+  <!-- MAIN -->
   <main class="main">
 
     <!-- FEED -->
@@ -47,8 +60,8 @@
         </div>
       </div>
 
-      <div class="post-creation">
-        <textarea id="postContent" placeholder="Share something..."></textarea>
+      <div id="postCreation" class="post-creation">
+        <textarea id="postContent" placeholder="Share something with the community..."></textarea>
         <button id="postBtn">Post Now</button>
       </div>
 
@@ -59,9 +72,24 @@
     <!-- SERVICES -->
     <section id="services" class="tab glass-card" hidden>
       <h2>Request a Service</h2>
-      <input type="text" id="serviceType" placeholder="Service type">
-      <textarea id="serviceDesc" placeholder="Describe what you need"></textarea>
-      <button id="requestServiceBtn">Submit Request</button>
+      <div class="service-form">
+        <label>Service Type:</label>
+        <input type="text" id="serviceType" placeholder="Service type"><br>
+
+        <label>Description:</label>
+        <textarea id="serviceDesc" placeholder="Describe what you need"></textarea><br>
+
+        <label>Choose Price:</label>
+        <select id="servicePrice">
+          <option value="">Select price</option>
+          <option value="5000">Basic Web - 5000 Ksh</option>
+          <option value="10500">Middle Web - 10,500 Ksh</option>
+          <option value="20000">Business Web - 20,000 Ksh</option>
+          <option value="50000">Portals & Major Webs - 50,000+ Ksh</option>
+        </select><br><br>
+
+        <button id="requestServiceBtn">Submit Request</button>
+      </div>
 
       <h3>Your Requests</h3>
       <div id="serviceList"></div>
@@ -80,39 +108,57 @@
     <!-- ADMIN -->
     <section id="admin" class="tab glass-card" hidden>
       <h2>Admin Control Center</h2>
-
       <div class="admin-nav">
-        <button class="sub-tab active" data-sub="adminUsers">Users</button>
-        <button class="sub-tab" data-sub="adminServices">Services</button>
-        <button class="sub-tab" data-sub="adminModeration">Moderation</button>
+        <button class="sub-tab active" data-sub="adminUsers">User Management</button>
+        <button class="sub-tab" data-sub="adminServices">Service Requests</button>
+        <button class="sub-tab" data-sub="adminModeration">Content Moderation</button>
       </div>
 
       <div id="adminUsers" class="admin-content">
-        <table>
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="userTableBody"></tbody>
-        </table>
+        <h3>Create New User</h3>
+        <input type="email" id="adminNewUserEmail" placeholder="User Email">
+        <input type="password" id="adminNewUserPass" placeholder="Password">
+        <button id="adminCreateUserBtn">Create User</button>
+
+        <h3>Existing Users</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+        </div>
       </div>
 
       <div id="adminServices" class="admin-content" hidden>
+        <h3>Service Requests</h3>
         <div id="adminServiceList"></div>
       </div>
 
       <div id="adminModeration" class="admin-content" hidden>
-        <div id="adminPostList"></div>
-        <div id="adminChatList"></div>
+        <h3>Content Moderation</h3>
+        <div class="mod-grid">
+          <div>
+            <h4>Recent Posts</h4>
+            <div id="adminPostList"></div>
+          </div>
+          <div>
+            <h4>Recent Chat Messages</h4>
+            <div id="adminChatList"></div>
+          </div>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- SINGLE SOURCE OF LOGIC -->
+  <!-- FIREBASE AND DASHBOARD JS -->
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
