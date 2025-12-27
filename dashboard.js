@@ -1,195 +1,381 @@
-// -------------------- IMPORT FIREBASE --------------------
-import { auth, db, rtdb } from "./firebase.js";
-import {
-  collection,
-  doc,
-  setDoc,
-  addDoc,
-  updateDoc,
-  serverTimestamp,
-  query,
-  orderBy,
-  onSnapshot,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-import { ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+import { localAuth } from "./local-auth.js";
+import { localDB } from "./local-db.js";
 
-// -------------------- TAB NAVIGATION --------------------
 const tabs = document.querySelectorAll(".menu .tab");
 const tabSections = document.querySelectorAll("main .tab");
 
 tabs.forEach(tab => {
   tab.addEventListener("click", () => {
     const target = tab.dataset.tab;
+    tabs.forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+
     tabSections.forEach(sec => {
       sec.classList.remove("active");
       sec.hidden = true;
     });
     const section = document.getElementById(target);
-    section.classList.add("active");
-    section.hidden = false;
+    if (section) {
+      section.classList.add("active");
+      section.hidden = false;
+    }
   });
 });
 
-// -------------------- AUTH & PROFILE --------------------
-auth.onAuthStateChanged(async user => {
+localAuth.onAuthStateChanged(async user => {
   if (!user) {
     window.location.href = "login.html";
     return;
   }
 
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-
-  if (!snap.exists()) {
-    await setDoc(userRef, {
-      email: user.email,
-      name: "",
-      avatar: "",
-      role: "user",
-      isNew: true,
-      joinedAt: serverTimestamp()
-    });
+  try {
+    const users = await localDB.getUsers();
+    const freshUser = users.find(u => u.uid === user.uid);
+    if (freshUser) {
+      if (JSON.stringify(freshUser) !== JSON.stringify(user)) {
+        user = freshUser;
+        localAuth.saveSession(user);
+      }
+    }
+  } catch (err) {
+    console.warn("Could not sync session:", err);
   }
 
-  // Real-time profile updates
-  onSnapshot(userRef, snapshot => {
-    const data = snapshot.data();
-    document.getElementById("userEmail").innerText = data.email || user.email;
+  const updateUI = (data) => {
+    document.getElementById("userEmail").innerText = data.email;
+    document.getElementById("userRole").innerText = data.role || "user";
     document.getElementById("updateName").value = data.name || "";
-    document.getElementById("updateEmail").value = data.email || user.email;
+    document.getElementById("updateEmail").value = data.email;
     document.getElementById("updateAvatar").value = data.avatar || "";
-    if (data.avatar) document.getElementById("userAvatar").style.backgroundImage = `url(${data.avatar})`;
+    if (data.avatar) {
+      document.getElementById("userAvatar").style.backgroundImage = `url(${data.avatar})`;
+      document.getElementById("userAvatar").style.backgroundSize = "cover";
+    }
+
+    if (data.role === 'admin') {
+      document.getElementById("adminTabBtn").hidden = false;
+      setupAdminListeners();
+    }
+  };
+
+  updateUI(user);
+
+  window.addEventListener("localDBUpdate:users", () => {
+    const updatedUser = localAuth.getCurrentUser();
+    if (updatedUser) updateUI(updatedUser);
   });
 
+  const toggleBtn = document.getElementById("toggleUpdateBtn");
+  const updateArea = document.getElementById("profileUpdateArea");
+  if (toggleBtn && updateArea) {
+    toggleBtn.onclick = () => {
+      updateArea.hidden = !updateArea.hidden;
+      toggleBtn.innerText = updateArea.hidden ? "Edit Profile" : "Cancel";
+    };
+  }
+
   setupPresence(user.uid);
+  setupFeed(user);
+  setupServices(user.uid);
+  setupChat(user.uid);
 });
 
-// -------------------- LOGOUT --------------------
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-  await auth.signOut();
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localAuth.logout();
   window.location.href = "login.html";
 });
 
-// -------------------- PROFILE UPDATE --------------------
 document.getElementById("updateProfileBtn").addEventListener("click", async () => {
-  const user = auth.currentUser;
-  const userRef = doc(db, "users", user.uid);
-
-  await updateDoc(userRef, {
+  const user = localAuth.getCurrentUser();
+  const updatedData = {
+    ...user,
     name: document.getElementById("updateName").value,
     email: document.getElementById("updateEmail").value,
     avatar: document.getElementById("updateAvatar").value
-  });
+  };
+
+  const updated = await localDB.saveUser(updatedData);
+  localAuth.saveSession(updated);
   alert("Profile updated!");
+  document.getElementById("profileUpdateArea").hidden = true;
+  document.getElementById("toggleUpdateBtn").innerText = "Edit Profile";
 });
 
-// -------------------- ONLINE PRESENCE --------------------
 function setupPresence(uid) {
-  const statusRef = ref(rtdb, "status/" + uid);
-  set(statusRef, { state: "online", lastChanged: Date.now() });
-  onDisconnect(statusRef).set({ state: "offline", lastChanged: Date.now() });
-
   const statusSpan = document.getElementById("userStatus");
-  onValue(ref(rtdb, "status"), snapshot => {
-    const val = snapshot.val();
-    if (!val) return;
-    const onlineUsers = Object.values(val).filter(v => v.state === "online");
-    statusSpan.innerText = onlineUsers.length ? "Online" : "Offline";
-  });
+  statusSpan.innerText = "Online";
 }
 
-// -------------------- COMMUNITY FEED --------------------
-const postsRef = collection(db, "posts");
-const feedQuery = query(postsRef, orderBy("timestamp", "desc"));
+function setupFeed(currentUser) {
+  const publicFeedDiv = document.getElementById("publicFeed");
+  const myPostsDiv = document.getElementById("myPostsFeed");
 
-onSnapshot(feedQuery, snapshot => {
-  const postsDiv = document.getElementById("posts");
-  postsDiv.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const div = document.createElement("div");
-    div.className = "feed-post glass-card";
-    div.innerHTML = `<strong>${data.email}</strong><p>${data.content}</p>`;
-    postsDiv.appendChild(div);
-  });
-});
-
-document.getElementById("postBtn").addEventListener("click", async () => {
-  const content = document.getElementById("postContent").value.trim();
-  if (!content) return;
-
-  await addDoc(postsRef, {
-    uid: auth.currentUser.uid,
-    email: auth.currentUser.email,
-    content,
-    timestamp: serverTimestamp()
+  const feedTabs = document.querySelectorAll(".feed-tab");
+  feedTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      feedTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.dataset.feed;
+      publicFeedDiv.hidden = target !== "public";
+      myPostsDiv.hidden = target === "public";
+    });
   });
 
-  document.getElementById("postContent").value = "";
-});
+  const renderFeed = async () => {
+    const posts = await localDB.getPosts();
+    publicFeedDiv.innerHTML = "";
+    myPostsDiv.innerHTML = "";
 
-// -------------------- SERVICE REQUESTS --------------------
-const serviceRef = collection(db, "serviceRequests");
-onSnapshot(serviceRef, snapshot => {
+    posts.forEach(post => {
+      const isMine = post.uid === currentUser.uid;
+      const div = document.createElement("div");
+      div.className = "feed-post glass-card";
+      if (isMine) div.classList.add("my-post");
+
+      div.innerHTML = `
+        ${isMine ? `<div class="post-actions"><button class="delete-btn-sm" onclick="window.deleteMyPost('${post.id}')">Delete</button></div>` : ""}
+        <strong>${post.email}</strong> ${isMine ? '<span class="badge" style="font-size:9px">You</span>' : ''}
+        <p>${post.content}</p>
+        <small style="color:var(--muted)">${new Date(post.timestamp).toLocaleString()}</small>
+      `;
+
+      if (isMine) myPostsDiv.appendChild(div);
+      else publicFeedDiv.appendChild(div);
+    });
+
+    if (publicFeedDiv.innerHTML === "") publicFeedDiv.innerHTML = "<p>No posts from others yet.</p>";
+    if (myPostsDiv.innerHTML === "") myPostsDiv.innerHTML = "<p>You haven't posted anything yet.</p>";
+  };
+
+  renderFeed();
+  window.addEventListener("localDBUpdate:posts", renderFeed);
+
+  document.getElementById("postBtn").onclick = async () => {
+    const content = document.getElementById("postContent").value.trim();
+    if (!content) return;
+    try {
+      await localDB.addPost({
+        uid: currentUser.uid,
+        email: currentUser.email,
+        content
+      });
+      document.getElementById("postContent").value = "";
+      alert("Post shared!");
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
+  window.deleteMyPost = async (postId) => {
+    if (confirm("Delete your post?")) {
+      await localDB.deletePost(postId);
+      alert("Post removed.");
+    }
+  };
+}
+
+function setupServices(uid) {
   const listDiv = document.getElementById("serviceList");
-  listDiv.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    if (data.uid === auth.currentUser.uid) {
+
+  const renderRequests = async () => {
+    const requests = await localDB.getRequests(uid);
+    listDiv.innerHTML = "";
+    requests.forEach(req => {
       const div = document.createElement("div");
       div.className = "glass-card";
-      div.innerHTML = `<strong>${data.type}</strong><p>${data.desc}</p><small>Status: ${data.status}</small>`;
+      div.style.marginBottom = "10px";
+      div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <strong>${req.type}</strong>
+          <span class="status-badge status-${req.status}">${req.status}</span>
+        </div>
+        <p>${req.desc}</p>
+        <small style="color:var(--muted)">Submitted: ${new Date(req.timestamp).toLocaleDateString()}</small>
+      `;
       listDiv.appendChild(div);
+    });
+  };
+
+  renderRequests();
+  window.addEventListener("localDBUpdate:requests", renderRequests);
+
+  document.getElementById("requestServiceBtn").onclick = async () => {
+    const type = document.getElementById("serviceType").value.trim();
+    const desc = document.getElementById("serviceDesc").value.trim();
+    if (!type || !desc) return;
+    await localDB.addRequest({
+      uid,
+      type,
+      desc
+    });
+    document.getElementById("serviceType").value = "";
+    document.getElementById("serviceDesc").value = "";
+    alert("Service request submitted!");
+  };
+}
+
+function setupChat(uid) {
+  const chatBox = document.getElementById("chatBox");
+
+  const renderChat = async () => {
+    const chat = await localDB.getChat();
+    chatBox.innerHTML = "";
+    chat.forEach(msg => {
+      const div = document.createElement("div");
+      div.className = msg.uid === uid ? "chat-message self" : "chat-message";
+      div.innerHTML = `<strong>${msg.email}:</strong> ${msg.msg}`;
+      chatBox.appendChild(div);
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  };
+
+  renderChat();
+  window.addEventListener("localDBUpdate:chat", renderChat);
+
+  document.getElementById("sendMessageBtn").onclick = async () => {
+    const msg = document.getElementById("chatMessage").value.trim();
+    if (!msg) return;
+    const user = localAuth.getCurrentUser();
+    await localDB.addChatMessage({
+      uid,
+      email: user.email,
+      msg
+    });
+    document.getElementById("chatMessage").value = "";
+  };
+}
+
+let adminListenersLoaded = false;
+function setupAdminListeners() {
+  if (adminListenersLoaded) return;
+  adminListenersLoaded = true;
+
+  const subTabs = document.querySelectorAll(".sub-tab");
+  const subSections = document.querySelectorAll(".admin-content");
+
+  subTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.sub;
+      subTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      subSections.forEach(sec => {
+        sec.hidden = true;
+        if (sec.id === target) sec.hidden = false;
+      });
+    });
+  });
+
+  document.getElementById("adminCreateUserBtn").onclick = async () => {
+    const email = document.getElementById("adminNewUserEmail").value.trim();
+    const password = document.getElementById("adminNewUserPass").value.trim();
+
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
     }
-  });
-});
 
-document.getElementById("requestServiceBtn").addEventListener("click", async () => {
-  const type = document.getElementById("serviceType").value.trim();
-  const desc = document.getElementById("serviceDesc").value.trim();
-  if (!type || !desc) return;
+    try {
+      await localDB.saveUser({ email, password });
+      alert(`User ${email} created!`);
+      document.getElementById("adminNewUserEmail").value = "";
+      document.getElementById("adminNewUserPass").value = "";
+    } catch (e) {
+      alert(e.message);
+    }
+  };
 
-  await addDoc(serviceRef, {
-    uid: auth.currentUser.uid,
-    type,
-    desc,
-    status: "pending",
-    timestamp: serverTimestamp()
-  });
+  const renderAdmin = async () => {
+    const users = await localDB.getUsers();
+    const requests = await localDB.getRequests();
+    const posts = await localDB.getPosts();
+    const chat = await localDB.getChat();
 
-  document.getElementById("serviceType").value = "";
-  document.getElementById("serviceDesc").value = "";
-});
+    const tableBody = document.getElementById("userTableBody");
+    tableBody.innerHTML = "";
+    users.forEach(user => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${user.email}</td>
+        <td><span class="badge">${user.role || 'user'}</span></td>
+        <td><span class="status-badge ${user.isBanned ? 'status-completed' : 'status-active'}" style="background:${user.isBanned ? '#ff4444' : '#44ff44'}">${user.isBanned ? 'Banned' : 'Active'}</span></td>
+        <td>
+          <button class="admin-action-btn promote" onclick="window.updateUserRole('${user.uid}', 'admin')">Make Admin</button>
+          <button class="admin-action-btn demote" onclick="window.updateUserRole('${user.uid}', 'user')">Make User</button>
+          <button class="admin-action-btn ${user.isBanned ? 'promote' : 'danger'}" style="background:${user.isBanned ? '#2ecc71' : '#e74c3c'}" onclick="window.toggleUserBan('${user.uid}')">
+            ${user.isBanned ? 'Unban' : 'Ban'}
+          </button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
 
-// -------------------- CHAT --------------------
-const chatRef = collection(db, "chat");
-const chatQuery = query(chatRef, orderBy("timestamp", "asc"));
-const chatBox = document.getElementById("chatBox");
+    const adminServiceList = document.getElementById("adminServiceList");
+    adminServiceList.innerHTML = "";
+    requests.forEach(req => {
+      const div = document.createElement("div");
+      div.className = "glass-card";
+      div.style.marginBottom = "10px";
+      div.innerHTML = `
+        <strong>${req.type}</strong> (${req.uid})
+        <p>${req.desc}</p>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span class="status-badge status-${req.status}">${req.status}</span>
+          <select onchange="window.updateRequestStatus('${req.id}', this.value)">
+            <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>Pending</option>
+            <option value="active" ${req.status === 'active' ? 'selected' : ''}>Active</option>
+            <option value="completed" ${req.status === 'completed' ? 'selected' : ''}>Completed</option>
+          </select>
+        </div>
+      `;
+      adminServiceList.appendChild(div);
+    });
 
-onSnapshot(chatQuery, snapshot => {
-  chatBox.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const div = document.createElement("div");
-    div.className = data.uid === auth.currentUser.uid ? "chat-message self" : "chat-message";
-    div.innerHTML = `<strong>${data.email}:</strong> ${data.msg}`;
-    chatBox.appendChild(div);
-  });
-  chatBox.scrollTop = chatBox.scrollHeight;
-});
+    const adminPostList = document.getElementById("adminPostList");
+    adminPostList.innerHTML = "";
+    posts.forEach(post => {
+      const div = document.createElement("div");
+      div.className = "mod-item";
+      div.innerHTML = `<strong>${post.email}</strong><p>${post.content}</p>
+        <button class="delete-btn" onclick="window.deleteContent('posts', '${post.id}')">Delete Post</button>`;
+      adminPostList.appendChild(div);
+    });
 
-document.getElementById("sendMessageBtn").addEventListener("click", async () => {
-  const msg = document.getElementById("chatMessage").value.trim();
-  if (!msg) return;
+    const adminChatList = document.getElementById("adminChatList");
+    adminChatList.innerHTML = "";
+    chat.forEach(msg => {
+      const div = document.createElement("div");
+      div.className = "mod-item";
+      div.innerHTML = `<strong>${msg.email}</strong><p>${msg.msg}</p>
+        <button class="delete-btn" onclick="window.deleteContent('chat', '${msg.id}')">Delete Message</button>`;
+      adminChatList.appendChild(div);
+    });
+  };
 
-  await addDoc(chatRef, {
-    uid: auth.currentUser.uid,
-    email: auth.currentUser.email,
-    msg,
-    timestamp: serverTimestamp()
-  });
+  renderAdmin();
+  window.addEventListener("localDBUpdate:users", renderAdmin);
+  window.addEventListener("localDBUpdate:posts", renderAdmin);
+  window.addEventListener("localDBUpdate:requests", renderAdmin);
+  window.addEventListener("localDBUpdate:chat", renderAdmin);
+}
 
-  document.getElementById("chatMessage").value = "";
-});
+window.updateUserRole = async (uid, newRole) => {
+  await localDB.saveUser({ uid, role: newRole });
+  alert("User role updated!");
+};
 
+window.updateRequestStatus = async (reqId, newStatus) => {
+  await localDB.updateRequest(reqId, { status: newStatus });
+  alert("Status updated!");
+};
+
+window.toggleUserBan = async (uid) => {
+  await localDB.toggleUserBan(uid);
+  alert("User status updated!");
+};
+
+window.deleteContent = async (type, id) => {
+  if (!confirm("Delete this permanently?")) return;
+  if (type === "posts") await localDB.deletePost(id);
+  else await localDB.deleteChat(id);
+  alert("Deleted!");
+};
