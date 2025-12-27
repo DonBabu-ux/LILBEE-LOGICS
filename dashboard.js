@@ -1,285 +1,253 @@
-/*********************************
- * FIREBASE IMPORTS
- *********************************/
-import { auth, db, rtdb } from "./firebase.js";
-
+// dashboard.js
+import { auth, db } from "./firebase.js";
 import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
 import {
-  doc, getDoc, setDoc, updateDoc,
-  collection, addDoc, getDocs, deleteDoc
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  addDoc,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-import {
-  ref, push, onValue
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
-
-/*********************************
- * TAB NAVIGATION
- *********************************/
-const tabs = document.querySelectorAll(".menu .tab");
-const sections = document.querySelectorAll("main .tab");
-
-tabs.forEach(tab => {
-  tab.addEventListener("click", () => {
-    tabs.forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-
-    sections.forEach(sec => {
-      sec.hidden = true;
-      sec.classList.remove("active");
-    });
-
-    const target = document.getElementById(tab.dataset.tab);
-    if (target) {
-      target.hidden = false;
-      target.classList.add("active");
-    }
-  });
-});
-
-/*********************************
- * AUTH STATE
- *********************************/
-let currentUserData = null;
-
+// --- AUTH CHECK ---
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
     return;
   }
 
+  loadProfile(user);
+  loadFeed(user);
+  loadServices(user);
+  loadChat(user);
+  setupTabs();
+});
+
+// --- PROFILE ---
+const avatarInput = document.getElementById("updateAvatar");
+const avatarPreview = document.getElementById("avatarPreview");
+
+avatarInput.addEventListener("input", () => {
+  const url = avatarInput.value.trim();
+  avatarPreview.style.backgroundImage = url ? `url(${url})` : "none";
+});
+
+async function loadProfile(user) {
   const userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);
 
-  if (!snap.exists()) {
-    currentUserData = {
-      uid: user.uid,
-      email: user.email,
-      role: "user",
-      createdAt: Date.now()
-    };
-    await setDoc(userRef, currentUserData);
+  if (snap.exists()) {
+    const data = snap.data();
+    document.getElementById("updateName").value = data.name || "";
+    document.getElementById("updatePhone").value = data.phone || "";
+    document.getElementById("updateEmail").value = data.email || user.email;
+    document.getElementById("updateAvatar").value = data.avatar || "";
+
+    if (data.avatar) avatarPreview.style.backgroundImage = `url(${data.avatar})`;
+    document.getElementById("userEmail").innerText = data.email || user.email;
   } else {
-    currentUserData = snap.data();
-  }
-
-  updateUI(currentUserData);
-  setupFeed(currentUserData);
-  setupServices(currentUserData.uid);
-  setupChat(currentUserData);
-
-  if (currentUserData.role === "admin") {
-    document.getElementById("adminTabBtn").hidden = false;
-    setupAdmin();
-  }
-});
-
-/*********************************
- * UI UPDATE
- *********************************/
-function updateUI(data) {
-  document.getElementById("userEmail").innerText = data.email;
-  document.getElementById("userRole").innerText = data.role || "user";
-  document.getElementById("updateName").value = data.name || "";
-  document.getElementById("updateEmail").value = data.email;
-  document.getElementById("updateAvatar").value = data.avatar || "";
-
-  if (data.avatar) {
-    const avatar = document.getElementById("userAvatar");
-    avatar.style.backgroundImage = `url(${data.avatar})`;
-    avatar.style.backgroundSize = "cover";
+    await setDoc(userRef, {
+      name: "",
+      phone: "",
+      email: user.email,
+      avatar: ""
+    });
   }
 }
 
-/*********************************
- * PROFILE UPDATE TOGGLE
- *********************************/
-const toggleBtn = document.getElementById("toggleUpdateBtn");
-const updateArea = document.getElementById("profileUpdateArea");
-
-toggleBtn.onclick = () => {
-  updateArea.hidden = !updateArea.hidden;
-  toggleBtn.innerText = updateArea.hidden ? "Edit Profile" : "Cancel";
-};
-
-/*********************************
- * SAVE PROFILE
- *********************************/
+// SAVE PROFILE
 document.getElementById("updateProfileBtn").onclick = async () => {
-  await updateDoc(doc(db, "users", currentUserData.uid), {
-    name: updateName.value,
-    avatar: updateAvatar.value
-  });
-  alert("Profile updated");
-  updateArea.hidden = true;
+  const user = auth.currentUser;
+  if (!user) return alert("Not logged in");
+
+  const name = document.getElementById("updateName").value.trim();
+  const phone = document.getElementById("updatePhone").value.trim();
+  const email = document.getElementById("updateEmail").value.trim();
+  const avatar = document.getElementById("updateAvatar").value.trim();
+
+  await updateDoc(doc(db, "users", user.uid), { name, phone, email, avatar });
+  document.getElementById("userEmail").innerText = email;
+  if (avatar) document.getElementById("userAvatar").style.backgroundImage = `url(${avatar})`;
+  alert("Profile updated successfully!");
 };
 
-/*********************************
- * LOGOUT
- *********************************/
+// TOGGLE PROFILE EDIT
+document.getElementById("toggleUpdateBtn").onclick = () => {
+  const area = document.getElementById("profileUpdateArea");
+  area.hidden = !area.hidden;
+  document.getElementById("toggleUpdateBtn").innerText = area.hidden ? "Edit Profile" : "Cancel";
+};
+
+// LOGOUT
 document.getElementById("logoutBtn").onclick = async () => {
   await signOut(auth);
   window.location.href = "login.html";
 };
 
-/*********************************
- * FEED (FIRESTORE)
- *********************************/
-function setupFeed(user) {
-  const publicFeed = document.getElementById("publicFeed");
-  const myFeed = document.getElementById("myPostsFeed");
+// --- TABS ---
+function setupTabs() {
+  const tabs = document.querySelectorAll(".menu .tab");
+  const tabSections = document.querySelectorAll("main .tab");
 
-  async function renderFeed() {
-    publicFeed.innerHTML = "";
-    myFeed.innerHTML = "";
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
 
-    const snap = await getDocs(collection(db, "posts"));
-    snap.forEach(d => {
-      const p = d.data();
-      const isMine = p.uid === user.uid;
+      tabSections.forEach(sec => {
+        sec.classList.remove("active");
+        sec.hidden = true;
+      });
 
+      const section = document.getElementById(target);
+      if (section) {
+        section.classList.add("active");
+        section.hidden = false;
+      }
+    });
+  });
+
+  const feedTabs = document.querySelectorAll(".feed-tab");
+  const publicFeedDiv = document.getElementById("publicFeed");
+  const myPostsDiv = document.getElementById("myPostsFeed");
+
+  feedTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      feedTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.dataset.feed;
+      publicFeedDiv.hidden = target !== "public";
+      myPostsDiv.hidden = target === "public";
+    });
+  });
+}
+
+// --- FEED ---
+async function loadFeed(user) {
+  const postsCol = collection(db, "posts");
+  const snap = await getDocs(postsCol);
+  const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  const publicFeedDiv = document.getElementById("publicFeed");
+  const myPostsDiv = document.getElementById("myPostsFeed");
+
+  function renderFeed() {
+    publicFeedDiv.innerHTML = "";
+    myPostsDiv.innerHTML = "";
+    posts.forEach(post => {
       const div = document.createElement("div");
-      div.className = "feed-post glass-card";
+      div.className = `feed-post glass-card ${post.uid === user.uid ? "my-post" : ""}`;
       div.innerHTML = `
-        <strong>${p.email}</strong>
-        <p>${p.content}</p>
-        <small>${new Date(p.timestamp).toLocaleString()}</small>
-        ${isMine ? `<button onclick="deletePost('${d.id}')">Delete</button>` : ""}
+        <strong>${post.email}</strong>
+        <p>${post.content}</p>
+        <small>${new Date(post.timestamp).toLocaleString()}</small>
       `;
-
-      (isMine ? myFeed : publicFeed).appendChild(div);
+      if (post.uid === user.uid) myPostsDiv.appendChild(div);
+      else publicFeedDiv.appendChild(div);
     });
   }
 
   renderFeed();
 
   document.getElementById("postBtn").onclick = async () => {
-    const content = postContent.value.trim();
+    const content = document.getElementById("postContent").value.trim();
     if (!content) return;
-
-    await addDoc(collection(db, "posts"), {
+    const newPost = {
       uid: user.uid,
       email: user.email,
       content,
       timestamp: Date.now()
-    });
-
-    postContent.value = "";
-    renderFeed();
-  };
-
-  window.deletePost = async (id) => {
-    await deleteDoc(doc(db, "posts", id));
+    };
+    await addDoc(postsCol, newPost);
+    posts.push(newPost);
+    document.getElementById("postContent").value = "";
     renderFeed();
   };
 }
 
-/*********************************
- * SERVICES (FIRESTORE)
- *********************************/
-function setupServices(uid) {
-  const list = document.getElementById("serviceList");
-
-  async function render() {
-    list.innerHTML = "";
-    const snap = await getDocs(collection(db, "requests"));
-    snap.forEach(d => {
-      const r = d.data();
-      if (r.uid !== uid) return;
-
-      const div = document.createElement("div");
-      div.className = "glass-card";
-      div.innerHTML = `
-        <strong>${r.type}</strong>
-        <p>${r.desc}</p>
-        <span>${r.status}</span>
-      `;
-      list.appendChild(div);
-    });
-  }
-
-  render();
+// --- SERVICES ---
+async function loadServices(user) {
+  const requestsCol = collection(db, "serviceRequests");
 
   document.getElementById("requestServiceBtn").onclick = async () => {
-    await addDoc(collection(db, "requests"), {
-      uid,
-      type: serviceType.value,
-      desc: serviceDesc.value,
+    const type = document.getElementById("serviceType").value.trim();
+    const desc = document.getElementById("serviceDesc").value.trim();
+    const price = document.getElementById("servicePrice").value;
+    if (!type || !desc || !price) return alert("Fill all service fields");
+
+    const newReq = {
+      uid: user.uid,
+      email: user.email,
+      type,
+      desc,
+      price,
       status: "pending",
       timestamp: Date.now()
-    });
-    serviceType.value = "";
-    serviceDesc.value = "";
-    render();
+    };
+
+    await addDoc(requestsCol, newReq);
+    alert("Service request submitted!");
+    document.getElementById("serviceType").value = "";
+    document.getElementById("serviceDesc").value = "";
+    document.getElementById("servicePrice").value = "";
+    loadServiceList(user);
   };
+
+  loadServiceList(user);
 }
 
-/*********************************
- * CHAT (REALTIME DATABASE)
- *********************************/
-function setupChat(user) {
-  const chatBox = document.getElementById("chatBox");
-  const chatRef = ref(rtdb, "chat");
+async function loadServiceList(user) {
+  const requestsCol = collection(db, "serviceRequests");
+  const snap = await getDocs(requestsCol);
+  const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const listDiv = document.getElementById("serviceList");
+  listDiv.innerHTML = "";
 
-  onValue(chatRef, snap => {
+  requests.filter(r => r.uid === user.uid).forEach(req => {
+    const div = document.createElement("div");
+    div.className = "glass-card";
+    div.innerHTML = `
+      <strong>${req.type}</strong> - ${req.price} Ksh
+      <p>${req.desc}</p>
+      <small>${new Date(req.timestamp).toLocaleDateString()}</small>
+    `;
+    listDiv.appendChild(div);
+  });
+}
+
+// --- CHAT ---
+async function loadChat(user) {
+  const chatCol = collection(db, "chatMessages");
+  const snap = await getDocs(chatCol);
+  const chat = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const chatBox = document.getElementById("chatBox");
+
+  function renderChat() {
     chatBox.innerHTML = "";
-    const data = snap.val() || {};
-    Object.values(data).forEach(msg => {
+    chat.forEach(msg => {
       const div = document.createElement("div");
-      div.className = msg.uid === user.uid ? "chat-message self" : "chat-message";
+      div.className = `chat-message ${msg.uid === user.uid ? "self" : ""}`;
       div.innerHTML = `<strong>${msg.email}:</strong> ${msg.msg}`;
       chatBox.appendChild(div);
     });
     chatBox.scrollTop = chatBox.scrollHeight;
-  });
-
-  document.getElementById("sendMessageBtn").onclick = async () => {
-    const msg = chatMessage.value.trim();
-    if (!msg) return;
-
-    await push(chatRef, {
-      uid: user.uid,
-      email: user.email,
-      msg,
-      timestamp: Date.now()
-    });
-
-    chatMessage.value = "";
-  };
-}
-
-/*********************************
- * ADMIN (FIRESTORE)
- *********************************/
-function setupAdmin() {
-  const table = document.getElementById("userTableBody");
-
-  async function renderUsers() {
-    table.innerHTML = "";
-    const snap = await getDocs(collection(db, "users"));
-    snap.forEach(d => {
-      const u = d.data();
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${u.email}</td>
-        <td>${u.role}</td>
-        <td>
-          <button onclick="setRole('${u.uid}','admin')">Admin</button>
-          <button onclick="setRole('${u.uid}','user')">User</button>
-        </td>
-      `;
-      table.appendChild(row);
-    });
   }
 
-  renderUsers();
+  renderChat();
 
-  window.setRole = async (uid, role) => {
-    await updateDoc(doc(db, "users", uid), { role });
-    renderUsers();
+  document.getElementById("sendMessageBtn").onclick = async () => {
+    const msg = document.getElementById("chatMessage").value.trim();
+    if (!msg) return;
+    const newMsg = { uid: user.uid, email: user.email, msg, timestamp: Date.now() };
+    await addDoc(chatCol, newMsg);
+    chat.push(newMsg);
+    document.getElementById("chatMessage").value = "";
+    renderChat();
   };
 }
