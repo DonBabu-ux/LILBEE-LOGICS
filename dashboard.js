@@ -1,5 +1,6 @@
 // dashboard.js
-import { auth, db } from "./firebase.js";
+import { auth } from "./src/firebase.js";
+
 import {
   onAuthStateChanged,
   signOut
