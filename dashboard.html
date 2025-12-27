@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <title>Dashboard | Lil-Bee Logics</title>
@@ -18,9 +17,10 @@
       <div id="userStatus" class="status online">Online</div>
 
       <button id="toggleUpdateBtn" class="small-btn">Edit Profile</button>
+
       <div id="profileUpdateArea" class="profile-update" hidden>
         <input type="text" id="updateName" placeholder="Name">
-        <input type="email" id="updateEmail" placeholder="Email">
+        <input type="email" id="updateEmail" placeholder="Email (read-only)" disabled>
         <input type="text" id="updateAvatar" placeholder="Avatar URL">
         <button id="updateProfileBtn">Save Changes</button>
       </div>
@@ -37,6 +37,7 @@
 
   <main class="main">
 
+    <!-- FEED -->
     <section id="feed" class="tab active glass-card">
       <div class="section-header">
         <h2>Community Feed</h2>
@@ -46,18 +47,16 @@
         </div>
       </div>
 
-      <div id="postCreation" class="post-creation">
-        <textarea id="postContent" placeholder="Share something with the community..."></textarea>
+      <div class="post-creation">
+        <textarea id="postContent" placeholder="Share something..."></textarea>
         <button id="postBtn">Post Now</button>
       </div>
 
-      <div id="publicFeed" class="feed-container">
-      </div>
-
-      <div id="myPostsFeed" class="feed-container" hidden>
-      </div>
+      <div id="publicFeed" class="feed-container"></div>
+      <div id="myPostsFeed" class="feed-container" hidden></div>
     </section>
 
+    <!-- SERVICES -->
     <section id="services" class="tab glass-card" hidden>
       <h2>Request a Service</h2>
       <input type="text" id="serviceType" placeholder="Service type">
@@ -68,6 +67,7 @@
       <div id="serviceList"></div>
     </section>
 
+    <!-- CHAT -->
     <section id="chat" class="tab glass-card" hidden>
       <h2>Chat</h2>
       <div class="chat-box" id="chatBox"></div>
@@ -77,84 +77,42 @@
       </div>
     </section>
 
+    <!-- ADMIN -->
     <section id="admin" class="tab glass-card" hidden>
       <h2>Admin Control Center</h2>
+
       <div class="admin-nav">
-        <button class="sub-tab active" data-sub="adminUsers">User Management</button>
-        <button class="sub-tab" data-sub="adminServices">Service Requests</button>
-        <button class="sub-tab" data-sub="adminModeration">Content Moderation</button>
+        <button class="sub-tab active" data-sub="adminUsers">Users</button>
+        <button class="sub-tab" data-sub="adminServices">Services</button>
+        <button class="sub-tab" data-sub="adminModeration">Moderation</button>
       </div>
 
       <div id="adminUsers" class="admin-content">
-        <h3>User Management</h3>
-
-        <div class="glass-card" style="margin-bottom: 20px;">
-          <h4>Create New User</h4>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <input type="email" id="adminNewUserEmail" placeholder="User Email"
-              style="flex:1; min-width:200px; margin-bottom:0;">
-            <input type="password" id="adminNewUserPass" placeholder="Password"
-              style="flex:1; min-width:150px; margin-bottom:0;">
-            <button id="adminCreateUserBtn">Create User</button>
-          </div>
-        </div>
-
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="userTableBody"></tbody>
-          </table>
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
       </div>
 
       <div id="adminServices" class="admin-content" hidden>
-        <h3>Service Requests</h3>
         <div id="adminServiceList"></div>
       </div>
 
       <div id="adminModeration" class="admin-content" hidden>
-        <h3>Content Moderation</h3>
-        <div class="mod-grid">
-          <div>
-            <h4>Recent Posts</h4>
-            <div id="adminPostList"></div>
-          </div>
-          <div>
-            <h4>Recent Chat Messages</h4>
-            <div id="adminChatList"></div>
-          </div>
-        </div>
+        <div id="adminPostList"></div>
+        <div id="adminChatList"></div>
       </div>
     </section>
 
   </main>
-<script type="module">
-  import { auth } from "./firebase.js";
-  import {
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "login.html";
-    }
-  });
-
-  window.logout = async () => {
-    await signOut(auth);
-    window.location.href = "login.html";
-  };
-</script>
-
+  <!-- SINGLE SOURCE OF LOGIC -->
   <script type="module" src="dashboard.js"></script>
 </body>
-
 </html>
