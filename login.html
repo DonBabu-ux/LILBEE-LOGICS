@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,7 +13,6 @@
   <div class="auth-container">
     <h2>Login to Access Lil-Bee Logics Services</h2>
 
-    <!-- Glowing bars -->
     <div class="auth-bars">
       <span></span>
       <span></span>
@@ -20,8 +20,6 @@
     </div>
 
     <form class="auth-form" id="loginForm">
-
-      <!-- Firebase uses EMAIL, not username -->
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="you@example.com" required />
 
@@ -29,7 +27,6 @@
       <input type="password" id="password" placeholder="••••••••" required />
 
       <button type="submit">Log In</button>
-
     </form>
 
     <p class="auth-switch">
@@ -38,46 +35,25 @@
     </p>
   </div>
 
-  <!-- FIREBASE LOGIN LOGIC -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from
-      "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAkMFYizmJ4dd8G8oJ9uw1JdgzwhtmsENU",
-      authDomain: "mywebapp-bb780.firebaseapp.com",
-      projectId: "mywebapp-bb780",
-      storageBucket: "mywebapp-bb780.appspot.com",
-      messagingSenderId: "1020137155241",
-      appId: "1:1020137155241:web:5f120fc16d62249fd897b8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    import { localAuth } from "./local-auth.js";
 
     const form = document.getElementById("loginForm");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
-
-        // ✅ SUCCESS → redirect
+        await localAuth.login(email, password);
         window.location.href = "dashboard.html";
-
       } catch (error) {
-        // ❌ FAILURE → null behavior
         console.error("Login failed:", error.message);
+        alert("Login failed: " + error.message);
       }
     });
   </script>
-<script type="module" src="firebase.js"> </script>
 </body>
+
 </html>
-
-
