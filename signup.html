@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,7 +21,6 @@
     </div>
 
     <form class="auth-form" id="signupForm">
-
       <label for="username">Username</label>
       <input type="text" id="username" placeholder="Your username" required />
 
@@ -34,7 +34,6 @@
       <input type="password" id="password" placeholder="••••••••" required />
 
       <button type="submit">Register</button>
-
     </form>
 
     <p class="auth-switch">
@@ -43,47 +42,26 @@
     </p>
   </div>
 
-  <!-- FIREBASE SIGNUP LOGIC -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from
-      "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAkMFYizmJ4dd8G8oJ9uw1JdgzwhtmsENU",
-      authDomain: "mywebapp-bb780.firebaseapp.com",
-      projectId: "mywebapp-bb780",
-      storageBucket: "mywebapp-bb780.appspot.com",
-      messagingSenderId: "1020137155241",
-      appId: "1:1020137155241:web:5f120fc16d62249fd897b8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    import { localAuth } from "./local-auth.js";
 
     const form = document.getElementById("signupForm");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
-
+        await localAuth.signup(email, password);
         // ✅ SUCCESS → redirect to dashboard
         window.location.href = "dashboard.html";
-
       } catch (error) {
-        // ❌ FAILURE → null behavior (log only)
-        console.error(error.message);
+        console.error("Signup failed:", error.message);
+        alert("Signup failed: " + error.message);
       }
     });
   </script>
-<script type="module src="firebase.js"> </script>
 </body>
+
 </html>
-
-
-

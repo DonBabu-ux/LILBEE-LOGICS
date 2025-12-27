@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Dashboard | Lil-Bee Logics</title>
@@ -14,23 +15,25 @@
     <div class="profile">
       <div id="userAvatar" class="avatar"></div>
       <h3 id="userEmail">Loading...</h3>
-      <span id="userStatus" class="status online">Online</span>
+      <span id="userRole" class="badge">user</span>
+      <div id="userStatus" class="status online">Online</div>
+
+      <button id="toggleUpdateBtn" class="small-btn">Edit Profile</button>
+      <div id="profileUpdateArea" class="profile-update" hidden>
+        <input type="text" id="updateName" placeholder="Name">
+        <input type="email" id="updateEmail" placeholder="Email">
+        <input type="text" id="updateAvatar" placeholder="Avatar URL">
+        <button id="updateProfileBtn">Save Changes</button>
+      </div>
     </div>
 
     <nav class="menu">
-      <button data-tab="feed" class="tab">Feed</button>
+      <button data-tab="feed" class="tab active">Feed</button>
       <button data-tab="services" class="tab">Services</button>
       <button data-tab="chat" class="tab">Chat</button>
+      <button id="adminTabBtn" data-tab="admin" class="tab" hidden>Admin</button>
       <button id="logoutBtn" class="danger">Logout</button>
     </nav>
-
-    <div class="profile-update glass-card">
-      <h4>Update Profile</h4>
-      <input type="text" id="updateName" placeholder="Name">
-      <input type="email" id="updateEmail" placeholder="Email">
-      <input type="text" id="updateAvatar" placeholder="Avatar URL">
-      <button id="updateProfileBtn">Update</button>
-    </div>
   </aside>
 
   <!-- MAIN CONTENT -->
@@ -38,10 +41,26 @@
 
     <!-- FEED -->
     <section id="feed" class="tab active glass-card">
-      <h2>Community Feed</h2>
-      <textarea id="postContent" placeholder="Share something..."></textarea>
-      <button id="postBtn">Post</button>
-      <div id="posts"></div>
+      <div class="section-header">
+        <h2>Community Feed</h2>
+        <div class="feed-nav">
+          <button class="feed-tab active" data-feed="public">Public Feed</button>
+          <button class="feed-tab" data-feed="myPosts">My Posts</button>
+        </div>
+      </div>
+
+      <div id="postCreation" class="post-creation">
+        <textarea id="postContent" placeholder="Share something with the community..."></textarea>
+        <button id="postBtn">Post Now</button>
+      </div>
+
+      <div id="publicFeed" class="feed-container">
+        <!-- Posts from others -->
+      </div>
+
+      <div id="myPostsFeed" class="feed-container" hidden>
+        <!-- User's own posts -->
+      </div>
     </section>
 
     <!-- SERVICES -->
@@ -65,9 +84,67 @@
       </div>
     </section>
 
+    <!-- ADMIN SECTION -->
+    <section id="admin" class="tab glass-card" hidden>
+      <h2>Admin Control Center</h2>
+      <div class="admin-nav">
+        <button class="sub-tab active" data-sub="adminUsers">User Management</button>
+        <button class="sub-tab" data-sub="adminServices">Service Requests</button>
+        <button class="sub-tab" data-sub="adminModeration">Content Moderation</button>
+      </div>
+
+      <div id="adminUsers" class="admin-content">
+        <h3>User Management</h3>
+
+        <div class="glass-card" style="margin-bottom: 20px;">
+          <h4>Create New User</h4>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="email" id="adminNewUserEmail" placeholder="User Email"
+              style="flex:1; min-width:200px; margin-bottom:0;">
+            <input type="password" id="adminNewUserPass" placeholder="Password"
+              style="flex:1; min-width:150px; margin-bottom:0;">
+            <button id="adminCreateUserBtn">Create User</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="adminServices" class="admin-content" hidden>
+        <h3>Service Requests</h3>
+        <div id="adminServiceList"></div>
+      </div>
+
+      <div id="adminModeration" class="admin-content" hidden>
+        <h3>Content Moderation</h3>
+        <div class="mod-grid">
+          <div>
+            <h4>Recent Posts</h4>
+            <div id="adminPostList"></div>
+          </div>
+          <div>
+            <h4>Recent Chat Messages</h4>
+            <div id="adminChatList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script type="module" src="dashboard.js"></script>
 </body>
-</html>
 
+</html>

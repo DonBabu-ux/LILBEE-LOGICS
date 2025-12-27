@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lil-Bee Logics</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <!-- NAVIGATION -->
@@ -104,79 +106,70 @@
   </section>
 
   <!-- Merry Christmas Message -->
-<div class="christmas-msg">
-  Merry Christmas and a happy New year 🎊 from CEO LilBee Logics & Team!
-Happy Boxing day 🎊🎈
-</div>
-
-<!-- Countdown Timer -->
-<div class="countdown" id="christmas-countdown">
+  <div class="christmas-msg">
+    Merry Christmas and a happy New year 🎊 from CEO LilBee Logics & Team!
+    Happy Boxing day 🎊🎈
   </div>
 
+  <!-- Countdown Timer -->
+  <div class="countdown" id="christmas-countdown">
+  </div>
 
   <!-- FOOTER -->
   <footer class="footer card glass-card" id="contact">
     <div class="footer-content">
-      <p>© 2025 Lil-Bee Logics. All rights reserved.</p>
+      <div class="footer-left">
+        <p>© 2025 Lil-Bee Logics. All rights reserved.</p>
+      </div>
+
+      <!-- SOCIAL ICONS -->
+      <div class="social-footer">
+        <a href="https://facebook.com/DonBabuUx" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/facebook.svg" alt="Facebook" />
+        </a>
+
+        <a href="https://wa.me/254711723406" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/whatsapp.svg" alt="WhatsApp" />
+        </a>
+
+        <a href="https://instagram.com/donthetechie" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram" />
+        </a>
+
+        <a href="https://github.com/DonBabu-ux" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub" />
+        </a>
+      </div>
+
       <nav class="footer-links">
         <a href="terms.html">Terms</a>
         <a href="privacy.html">Privacy</a>
         <a href="help-feedback.html">Help & Feedback</a>
       </nav>
     </div>
-
-    <!-- SOCIAL ICONS -->
-    <div class="social-footer">
-      <a href="https://facebook.com/DonBabuUx" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/facebook.svg" alt="Facebook" />
-      </a>
-
-      <a href="https://wa.me/254711723406" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/whatsapp.svg" alt="WhatsApp" />
-      </a>
-
-      <a href="https://instagram.com/donthetechie" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram" />
-      </a>
-
-      <a href="https://github.com/DonBabu-ux" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub" />
-      </a>
-    </div>
   </footer>
+
   <script>
-function updateCountdown(){
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const christmas = new Date(`January 1, ${currentYear} 00:00:00`);
-  if(now > christmas) christmas.setFullYear(currentYear + 1);
-  const diff = christmas - now;
+    function updateCountdown() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const christmas = new Date(`January 1, ${currentYear} 00:00:00`);
+      if (now > christmas) christmas.setFullYear(currentYear + 1);
+      const diff = christmas - now;
 
-  const days = Math.floor(diff / (1000*60*60*24));
-  const hours = Math.floor((diff / (1000*60*60)) % 24);
-  const mins = Math.floor((diff / (1000*60)) % 60);
-  const secs = Math.floor((diff / 1000) % 60);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
 
-  document.getElementById('christmas-countdown').textContent =
-    `🎄 ${days}d ${hours}h ${mins}m ${secs}s until New year 🎉!🎈`;
-}
+      document.getElementById('christmas-countdown').textContent =
+        `🎄 ${days}d ${hours}h ${mins}m ${secs}s until New year 🎉!🎈`;
+    }
 
-setInterval(updateCountdown,1000);
-updateCountdown();
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
 
   </script>
 </body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
