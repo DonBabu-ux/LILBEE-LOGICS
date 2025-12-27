@@ -1,165 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard | Lil-Bee Logics</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>services & prices </title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
-<body class="dashboard">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar glass-card">
-    <div class="profile">
-      <div id="userAvatar" class="avatar"></div>
-      <div id="avatarPreview" style="width:80px;height:80px;border-radius:50%;background:#ddd;background-size:cover;margin:10px auto;"></div>
-
-      <h3 id="userEmail">Loading...</h3>
-      <span id="userRole" class="badge">user</span>
-      <div id="userStatus" class="status online">Online</div>
-
-      <button id="toggleUpdateBtn" class="small-btn">Edit Profile</button>
-      <div id="profileUpdateArea" class="profile-update" hidden>
-        <label>Name:</label><br>
-        <input type="text" id="updateName" placeholder="Name"><br>
-
-        <label>Phone:</label><br>
-        <input type="tel" id="updatePhone" placeholder="Phone"><br>
-
-        <label>Email:</label><br>
-        <input type="email" id="updateEmail" placeholder="Email"><br>
-
-        <label>Avatar URL:</label><br>
-        <input type="text" id="updateAvatar" placeholder="Avatar URL"><br><br>
-
-        <button id="updateProfileBtn">Save Changes</button>
-      </div>
-    </div>
-
-    <nav class="menu">
-      <button data-tab="feed" class="tab active">Feed</button>
-      <button data-tab="services" class="tab">Services</button>
-      <button data-tab="chat" class="tab">Chat</button>
-      <button id="adminTabBtn" data-tab="admin" class="tab" hidden>Admin</button>
-      <button id="logoutBtn" class="danger">Logout</button>
+<body>
+    <header class="nav-wrapper">
+    <nav class="nav">
+      <div class="logo">Lil-Bee<span>Logics</span></div>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="help-feedback.html">Help</a></li>
+      </ul>
     </nav>
-  </aside>
+  </header>
+  <!--Dashboard-updating profile-->
+  <section id="profile" class="service-card">
+    <h2>LilBee Logics Dashboard.<br> Enjoy our services</h2>
+   <h5>Profile</h5>
+   
+   <label>Username :</label><br>
+   <input type="text" id="Username" required><br>
 
-  <!-- MAIN -->
-  <main class="main">
+   <label>Phone :</label><br>
+   <input type="tel" id="Phonenumber" required><br>
 
-    <!-- FEED -->
-    <section id="feed" class="tab active glass-card">
-      <div class="section-header">
-        <h2>Community Feed</h2>
-        <div class="feed-nav">
-          <button class="feed-tab active" data-feed="public">Public Feed</button>
-          <button class="feed-tab" data-feed="myPosts">My Posts</button>
-        </div>
-      </div>
+   <label>Email :</label><br>
+   <input type="email" id="Email" required><br> <br>
+   <button type="submit">Save</button>
 
-      <div id="postCreation" class="post-creation">
-        <textarea id="postContent" placeholder="Share something with the community..."></textarea>
-        <button id="postBtn">Post Now</button>
-      </div>
+   
+  
 
-      <div id="publicFeed" class="feed-container"></div>
-      <div id="myPostsFeed" class="feed-container" hidden></div>
-    </section>
+<!-- SERVICES SECTION -->
+<div class="hero-visual" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+</section>
+  <section id="services" class="services card">
+    <h2>Our Core Services</h2>
+    <p class="section-intro">We combine creativity, security, and performance to deliver solutions that exceed expectations.</p>
+    <div class="services-grid">
+      <article class="service-card glass-card">
+        <h3>Web Development</h3>
+        <p>Modern, responsive websites and web applications built for speed and scalability.</p>
+      </article>
+      <article class="service-card glass-card">
+        <h3>Graphic Design</h3>
+        <p>Professional brand visuals, UI assets, and marketing designs that stand out.</p>
+      </article>
+      <article class="service-card glass-card">
+        <h3>Cybersecurity</h3>
+        <p>Security audits, protection strategies, and risk mitigation for digital assets.</p>
+      </article>
+      <article class="service-card glass-card">
+        <h3>Portfolios & Landing Pages</h3>
+        <p>High-conversion personal and business landing pages tailored to your goals.</p>
+      </article>
+      <article class="service-card glass-card">
+        <h3>Virtual Assistance</h3>
+        <p>Reliable administrative and technical support to keep your operations running smoothly.</p>
+      </article>
+      <article class="service-card glass-card">
+        <h3>Renting of LinkedIn Accounts</h3>
+        <p>Earn <span>Legit Money</span> with your idle LinkedIn Account. Payments are either made daily or weekly.</p>
 
-    <!-- SERVICES -->
-    <section id="services" class="tab glass-card" hidden>
-      <h2>Request a Service</h2>
-      <div class="service-form">
-        <label>Service Type:</label>
-        <input type="text" id="serviceType" placeholder="Service type"><br>
+      </article>
+    </div>
+  </section>
 
-        <label>Description:</label>
-        <textarea id="serviceDesc" placeholder="Describe what you need"></textarea><br>
+<!--Payment Variation of services-->
+<section id="Payments" class="service card">
+   <p>We as lilbee logics accept a variety of payment methods</p>
+    <p>
+    These include:
+    <ul>
+        Mpesa<br>
+        Airtel Money<br>
+        Credit cards<br>
+        Account Transactions
+    </ul>
+    <em>NB: All Transactions made <strong>must</strong> be verified </em>
+    </p>
+   
+   
+   
+    <h2>Web Development</h2>
+   <article class="service-card glass-card">
+    <p>Our prices vary according to the type of the web.
+        <h1>Choose your Price</h1>
+    </p>
+   <ol>
+    <select name="service-select" id="serviceSelection">
+<option value="">Choose here</option>
+<option value="5000">We charge @5000 ksh for a non-interactive web</option>
+<option value="10,500">A middle-based web goes for as low as @10,500 ksh</option>
+<option value="20,000">Business based web goes for as low as @20,000 ksh</option> 
+<option value="50,000">Portals and major webs go for @50,000 + depending on the quality </option>
+</select>
+   </ol>
+   <p><strong>Prices are not fixed.</strong>
+<em>There is still room for bargaining</em>
+</p>
+</article>
 
-        <label>Choose Price:</label>
-        <select id="servicePrice">
-          <option value="">Select price</option>
-          <option value="5000">Basic Web - 5000 Ksh</option>
-          <option value="10500">Middle Web - 10,500 Ksh</option>
-          <option value="20000">Business Web - 20,000 Ksh</option>
-          <option value="50000">Portals & Major Webs - 50,000+ Ksh</option>
-        </select><br><br>
+<h2>Graphic Design</h2>
+<article class="service-card glass-card">
+    <p>Quality designs at an affordable price
+        <ol>
+            Gift cards<br> birthday cards <br>success cards <br>posters <br> flyers & campaign  posters etc
+        </ol>
+        
+    </p>
+    <select name="service-select" id="serviceSelection">
+        <option value="">Chose your price</option>
+        <option value="300">Basic posters are charged @300 bob</option>
+        <option value="500">Gift birthday and success cards are charged at @500 depending on the size and quality</option>
+        <option value="1100">campaign/election posters are charged @1100</option>
+    </select>
+    <em>Remember to include a <strong>picture</strong> that wil be added to the design</em>
+</article>
 
-        <button id="requestServiceBtn">Submit Request</button>
-      </div>
+<h2>Cybersecurity</h2>
+<article class="service-card glass-card">
+  <p>Top-notch technical audits from our ethical hacking team</p>
+  <p>We offer modern high security audits protection strategies and risk mitigationfor digital assets </p>
+  <select name="service-select" id="serviceSelection">
+    <option value="">Choose your price here</option>
+    <option value="5000">5000ksh for vulnerability analysis and risk asessments</option>
+  </select>
+  <em>Bargainable price</em><strong> starting from @5000 ksh</strong>
+</article>
 
-      <h3>Your Requests</h3>
-      <div id="serviceList"></div>
-    </section>
-
-    <!-- CHAT -->
-    <section id="chat" class="tab glass-card" hidden>
-      <h2>Chat</h2>
-      <div class="chat-box" id="chatBox"></div>
-      <div class="chat-input">
-        <input type="text" id="chatMessage" placeholder="Type a message">
-        <button id="sendMessageBtn">Send</button>
-      </div>
-    </section>
-
-    <!-- ADMIN -->
-    <section id="admin" class="tab glass-card" hidden>
-      <h2>Admin Control Center</h2>
-      <div class="admin-nav">
-        <button class="sub-tab active" data-sub="adminUsers">User Management</button>
-        <button class="sub-tab" data-sub="adminServices">Service Requests</button>
-        <button class="sub-tab" data-sub="adminModeration">Content Moderation</button>
-      </div>
-
-      <div id="adminUsers" class="admin-content">
-        <h3>Create New User</h3>
-        <input type="email" id="adminNewUserEmail" placeholder="User Email">
-        <input type="password" id="adminNewUserPass" placeholder="Password">
-        <button id="adminCreateUserBtn">Create User</button>
-
-        <h3>Existing Users</h3>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="userTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="adminServices" class="admin-content" hidden>
-        <h3>Service Requests</h3>
-        <div id="adminServiceList"></div>
-      </div>
-
-      <div id="adminModeration" class="admin-content" hidden>
-        <h3>Content Moderation</h3>
-        <div class="mod-grid">
-          <div>
-            <h4>Recent Posts</h4>
-            <div id="adminPostList"></div>
-          </div>
-          <div>
-            <h4>Recent Chat Messages</h4>
-            <div id="adminChatList"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- FIREBASE AND DASHBOARD JS -->
-  <script type="module" src="dashboard.js"></script>
-  <script type="module" src="firebase.js"></script>
+<h2>Virtual Assistance</h2>
+<article class="service-card glass-card">
+  <p>Always ready to help you with the overwhelming work management pressure</p>
+  <p>We always ensure your services are running smoothly</p>
+    <em>virtual Assistance payment is an agreement for the both parties involved</em>
+</article>
+</section>
 </body>
 </html>
-
