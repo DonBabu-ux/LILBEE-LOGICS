@@ -999,10 +999,467 @@ th {
   color: #fff;
 }
 
-.sub-tab.active {
+/* --- CHAT UI --- */
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  height: 500px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar for chat */
+.chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.chat-message {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+  word-wrap: break-word;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: popIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes popIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message.self {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--accent), #ff9d51);
+  color: #071028;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 15px rgba(255, 184, 107, 0.2);
+}
+
+.chat-message.other {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.08);
+  /* Glass bubble */
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-meta {
+  font-size: 11px;
+  margin-bottom: 4px;
+  font-weight: 500;
+  opacity: 0.8;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.chat-message.self .chat-meta {
+  color: rgba(7, 16, 40, 0.7);
+}
+
+.chat-message.other .chat-meta {
+  color: var(--muted);
+}
+
+.chat-time {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Chat Input Area */
+.chat-input {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+}
+
+.chat-input input {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: 10px 15px;
+  color: #fff;
+  flex: 1;
+  font-size: 14px;
+}
+
+.chat-input input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.chat-input button {
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(90deg, var(--accent), #ff9d51);
   color: #071028;
-  font-weight: 700;
-  border-color: transparent;
   box-shadow: 0 4px 12px rgba(255, 184, 107, 0.3);
+  transition: transform 0.2s;
+}
+
+.chat-input button:hover {
+  transform: scale(1.1);
+}
+
+.chat-input button svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* --- GLOBAL UI POLISH --- */
+
+/* 1. Feed: Social Cards */
+.feed-post {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.feed-post::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.feed-post:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.feed-post strong {
+  display: block;
+  font-size: 15px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.feed-post p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin: 8px 0 12px;
+}
+
+.feed-post small {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* My Post specific style */
+.my-post {
+  border-left: 4px solid var(--accent);
+  background: linear-gradient(90deg, rgba(255, 184, 107, 0.05), transparent);
+}
+
+/* 2. Services: Digital Tickets */
+.glass-card {
+  /* Overriding previous basic glass-card for services */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ticket punch effect visually */
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  width: 20px;
+  height: 20px;
+  background: var(--bg2);
+  /* Matches background to look like a hole */
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.glass-card strong {
+  font-size: 18px;
+  color: #fff;
+  display: block;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.glass-card p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* Glowing Status Badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+.status-pending {
+  background: rgba(255, 152, 0, 0.15);
+  color: #ffb74d;
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.2);
+}
+
+.status-active {
+  background: rgba(76, 175, 80, 0.15);
+  color: #81c784;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+}
+
+.status-completed {
+  background: rgba(33, 150, 243, 0.15);
+  color: #64b5f6;
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.2);
+}
+
+/* Global Utility to enforce hidden state */
+[hidden] {
+  display: none !important;
+}
+
+/* 3. Sidebar Polish */
+.sidebar {
+  /* Darker background for better contrast */
+  background: rgba(11, 17, 33, 0.85);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.avatar {
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 15px rgba(255, 184, 107, 0.3);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.avatar:hover {
+  transform: scale(1.05) rotate(5deg);
+}
+
+/* Sidebar Menu Buttons */
+.menu button {
+  border-radius: 99px;
+  /* Pill shape */
+  font-weight: 500;
+  /* Regular weight for inactive */
+  transition: all 0.2s ease;
+  padding: 12px 20px;
+  color: rgba(255, 255, 255, 0.5);
+  /* Much more muted for inactive */
+  background: transparent;
+  /* Explicitly transparent */
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  /* Spacing */
+}
+
+.menu button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateX(4px);
+}
+
+.menu button.active {
+  background: linear-gradient(90deg, var(--accent), #ff9d51);
+  color: #071028;
+  /* Dark text on bright gradient */
+  font-weight: 700;
+  /* Bold for active */
+  box-shadow: 0 4px 15px rgba(255, 184, 107, 0.25);
+}
+
+/* 4. Admin Select Polish */
+.status-select {
+  appearance: auto;
+  /* Keep native arrow but style box */
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.status-select:hover,
+.status-select:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent);
+}
+
+.status-select option {
+  background: #0f172a;
+  /* Dark background for dropdown options */
+  color: #fff;
+  padding: 10px;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+
+  /* Landing Page Fixes */
+  .hero,
+  .footer-content,
+  .auth-container {
+    padding: 20px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    /* Stack services */
+  }
+
+  .hero-visual {
+    display: none;
+    /* Hide visual on mobile if it takes too much space, or adjust */
+  }
+
+  /* Dashboard Mobile Layout */
+  body.dashboard {
+    flex-direction: column;
+  }
+
+  .main {
+    padding: 15px;
+    padding-bottom: 80px;
+    /* Space for bottom nav */
+  }
+
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    padding: 10px;
+    background: rgba(11, 17, 33, 0.95);
+    /* Less transparency for nav */
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .profile {
+    display: none;
+    /* Hide profile in bottom nav */
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    gap: 0;
+  }
+
+  .menu button {
+    flex-direction: column;
+    padding: 8px;
+    font-size: 10px;
+    gap: 4px;
+    text-align: center;
+    border-radius: 8px;
+    /* Less rounded for bottom bar items */
+    margin: 0;
+    background: transparent !important;
+    /* Remove bg for cleaner look */
+    box-shadow: none !important;
+  }
+
+  .menu button.active {
+    color: var(--accent);
+  }
+
+  .menu button.active::after {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-top: 2px;
+  }
+
+  /* Chat Mobile Optimization */
+  .chat-box {
+    height: calc(100vh - 220px);
+    /* Adjust for mobile viewport */
+  }
+
+  .chat-input {
+    position: sticky;
+    bottom: 0;
+    background: #0f172a;
+    /* Solid bg to cover content behind */
+    z-index: 10;
+  }
+
+  /* Admin Table Horizontal Scroll */
+  .table-container {
+    width: 100%;
+    overflow-x: scroll;
+  }
+
+  /* Mod Grid Stack */
+  .mod-grid {
+    grid-template-columns: 1fr;
+  }
 }

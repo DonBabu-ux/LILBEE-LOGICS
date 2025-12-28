@@ -55,6 +55,8 @@ localAuth.onAuthStateChanged(async user => {
     if (data.role === 'admin') {
       document.getElementById("adminTabBtn").hidden = false;
       setupAdminListeners();
+    } else {
+      document.getElementById("adminTabBtn").hidden = true;
     }
   };
 
@@ -220,10 +222,23 @@ function setupChat(uid) {
   const renderChat = async () => {
     const chat = await localDB.getChat();
     chatBox.innerHTML = "";
+
+    // Process messages
     chat.forEach(msg => {
+      const isMe = msg.uid === uid;
       const div = document.createElement("div");
-      div.className = msg.uid === uid ? "chat-message self" : "chat-message";
-      div.innerHTML = `<strong>${msg.email}:</strong> ${msg.msg}`;
+      div.className = isMe ? "chat-message self" : "chat-message other";
+
+      const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      const sender = isMe ? "You" : (msg.email.split('@')[0]); // Just show username part
+
+      div.innerHTML = `
+        <div class="chat-meta">
+          <span>${sender}</span>
+          <span class="chat-time">${time}</span>
+        </div>
+        <div class="message-content">${msg.msg}</div>
+      `;
       chatBox.appendChild(div);
     });
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -232,16 +247,27 @@ function setupChat(uid) {
   renderChat();
   window.addEventListener("localDBUpdate:chat", renderChat);
 
-  document.getElementById("sendMessageBtn").onclick = async () => {
-    const msg = document.getElementById("chatMessage").value.trim();
+  document.getElementById("sendMessageBtn").innerHTML = `
+    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+  `;
+
+  const sendMsg = async () => {
+    const input = document.getElementById("chatMessage");
+    const msg = input.value.trim();
     if (!msg) return;
+
     const user = localAuth.getCurrentUser();
     await localDB.addChatMessage({
       uid,
       email: user.email,
       msg
     });
-    document.getElementById("chatMessage").value = "";
+    input.value = "";
+  };
+
+  document.getElementById("sendMessageBtn").onclick = sendMsg;
+  document.getElementById("chatMessage").onkeydown = (e) => {
+    if (e.key === 'Enter') sendMsg();
   };
 }
 
@@ -320,7 +346,7 @@ function setupAdminListeners() {
         <p>${req.desc}</p>
         <div style="display:flex; gap:10px; align-items:center;">
           <span class="status-badge status-${req.status}">${req.status}</span>
-          <select onchange="window.updateRequestStatus('${req.id}', this.value)">
+          <select class="status-select" onchange="window.updateRequestStatus('${req.id}', this.value)">
             <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>Pending</option>
             <option value="active" ${req.status === 'active' ? 'selected' : ''}>Active</option>
             <option value="completed" ${req.status === 'completed' ? 'selected' : ''}>Completed</option>
